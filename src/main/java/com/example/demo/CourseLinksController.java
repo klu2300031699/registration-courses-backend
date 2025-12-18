@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -45,6 +46,29 @@ public class CourseLinksController {
         }
         
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllSubmissions() {
+        List<CourseLinks> allSubmissions = service.getAllSubmissions();
+        return ResponseEntity.ok(allSubmissions);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateCourseLinks(@PathVariable Long id, @RequestBody CourseLinks courseLinks) {
+        try {
+            CourseLinks updated = service.updateCourseLinks(id, courseLinks);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Course links updated successfully");
+            response.put("data", updated);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
     @DeleteMapping("/delete/{loginID}")
